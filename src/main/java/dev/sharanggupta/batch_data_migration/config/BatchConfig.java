@@ -3,8 +3,8 @@ package dev.sharanggupta.batch_data_migration.config;
 import dev.sharanggupta.batch_data_migration.entity.DestinationRestaurantEntity;
 import dev.sharanggupta.batch_data_migration.entity.SourceRestaurantEntity;
 import dev.sharanggupta.batch_data_migration.processor.MongoToPostgresProcessor;
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-@EnableBatchProcessing
+@Slf4j
 public class BatchConfig {
 
   @Bean
@@ -39,6 +39,18 @@ public class BatchConfig {
             .reader(reader)
             .processor(processor)
             .writer(writer)
+            .listener(new StepExecutionListener() {
+              @Override
+              public void beforeStep(StepExecution stepExecution) {
+                log.info("Starting migration step...");
+              }
+
+              @Override
+              public ExitStatus afterStep(StepExecution stepExecution) {
+                log.info("Migration step finished.");
+                return ExitStatus.COMPLETED;
+              }
+            })
             .build();
   }
 

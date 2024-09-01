@@ -3,7 +3,7 @@ spring:
     name: batch-data-migration
   data:
     mongodb:
-      uri: mongodb://admin:password@localhost:27017/sample_restaurants
+      uri: mongodb://admin:password@localhost:27017/sample_restaurants?authSource=admin
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/sample_restaurants
